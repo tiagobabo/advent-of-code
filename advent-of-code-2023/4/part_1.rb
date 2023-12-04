@@ -10,4 +10,4 @@ File.readlines('input.txt', chomp: true).each.with_index(1) do |line, n|
   sum += 2 ** ((winning_numbers & card_numbers).size - 1)
 end
 
-p sum.to_i
+p sum
