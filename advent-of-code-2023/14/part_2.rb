@@ -2,26 +2,28 @@ require 'ostruct'
 
 def run_cycle(rocks, total_x, total_y)
   ['N', 'W', 'S', 'E'].each do |direction|
+    last_rocks = {}
+
     case direction
     when 'N'
-      rocks.select { |r| r[2] == 'O' }.sort_by { |r| r[0] }.each do |rock|
-        blocking_rock = rocks.select { |r| r[1] == rock[1] && r[0] < rock[0] }.max_by { |r| r[0] }
-        rock[0] = blocking_rock ? blocking_rock[0] + 1 : 0
+      rocks.sort_by { |r| r[0] }.each do |rock|
+        rock[0] = (last_rocks[rock[1]] ? last_rocks[rock[1]][0] + 1 : 0) if rock[2] == 'O'
+        last_rocks[rock[1]] = rock
       end
     when 'S'
-      rocks.select { |r| r[2] == 'O' }.sort_by { |r| -r[0] }.each do |rock|
-        blocking_rock = rocks.select { |r| r[1] == rock[1] && r[0] > rock[0] }.min_by { |r| r[0] }
-        rock[0] = blocking_rock ? blocking_rock[0] - 1 : (total_x - 1)
+      rocks.sort_by { |r| -r[0] }.each do |rock|
+        rock[0] = (last_rocks[rock[1]] ? last_rocks[rock[1]][0] - 1 : total_x - 1) if rock[2] == 'O'
+        last_rocks[rock[1]] = rock
       end
     when 'W'
-      rocks.select { |r| r[2] == 'O' }.sort_by { |r| r[1] }.each do |rock|
-        blocking_rock = rocks.select { |r| r[0] == rock[0] && r[1] < rock[1] }.max_by { |r| r[1] }
-        rock[1] = blocking_rock ? blocking_rock[1] + 1 : 0
+      rocks.sort_by { |r| r[1] }.each do |rock|
+        rock[1] = (last_rocks[rock[0]] ? last_rocks[rock[0]][1] + 1 : 0) if rock[2] == 'O'
+        last_rocks[rock[0]] = rock
       end
     when 'E'
-      rocks.select { |r| r[2] == 'O' }.sort_by { |r| -r[1] }.each do |rock|
-        blocking_rock = rocks.select { |r| r[0] == rock[0] && r[1] > rock[1] }.min_by { |r| r[1] }
-        rock[1] = blocking_rock ? blocking_rock[1] - 1 : (total_y - 1)
+      rocks.sort_by { |r| -r[1] }.each do |rock|
+        rock[1] = (last_rocks[rock[0]] ? last_rocks[rock[0]][1] - 1 : total_y - 1) if rock[2] == 'O'
+        last_rocks[rock[0]] = rock
       end
     end
   end
@@ -38,17 +40,16 @@ File.readlines('input.txt', chomp: true).each_with_index do |line, x|
     rocks << [x, y, rock]
   end
 
-  total_y = line.length
   total_x += 1
+  total_y = line.length
 end
 
 cache = []
 cache_key = nil
 n = 0
 
-while true
-  n += 1
-  cache_key = rocks.map { |rock| [rock[0], rock[1], rock[2]] }.sort.hash
+while n += 1
+  cache_key = rocks.sort.map { |rock| [rock[0], rock[1], rock[2]] }.hash
 
   run_cycle(rocks, total_x, total_y)
 
