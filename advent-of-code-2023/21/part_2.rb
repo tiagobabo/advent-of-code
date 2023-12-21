@@ -37,7 +37,7 @@ end
 p queue.size
 p heatmap.values.sort.tally.map { |k, v| k * v }.sum
 
-# By running this for a while it's possible to find a cycle every 131 positioons with 3 keys
+# By running this for a while it's possible to find a cycle every 131 iterations with 3 keys
 # Those 3 keys can be calculated
 # First key: cycle ** 2
 # Second key: (cycle ** 2 + cycle)
