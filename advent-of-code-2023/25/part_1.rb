@@ -9,8 +9,8 @@ File.readlines('input.txt', chomp: true).each do |line|
   end
 end
 
+# Karger's algorithm
 n = 0
-
 until n == 3
   edges = initial_edges.map(&:dup)
 
