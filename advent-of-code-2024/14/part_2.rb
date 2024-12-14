@@ -1,5 +1,3 @@
-require 'oily_png'
-
 robots = []
 max_x = 101
 max_y = 103
@@ -13,16 +11,28 @@ File.readlines('input.txt', chomp: true).each do |robot|
 end
 
 10_000.times do |i|
+  visited = Set.new
+
   robots.each do |position, velocity|
     position[0] = (position[0] + velocity[0]) % max_x
     position[1] = (position[1] + velocity[1]) % max_y
+
+    visited << position
   end
 
-  png = ChunkyPNG::Image.new(max_x, max_y, ChunkyPNG::Color::WHITE)
+  if visited.size == robots.size
+    p i + 1
 
-  robots.each do |position, _|
-    png[position[0], position[1]] = ChunkyPNG::Color::BLACK
+    grid = Array.new(max_y) { Array.new(max_x, '.') }
+
+    robots.each do |position, _|
+      grid[position[1]][position[0]] = '#'
+    end
+
+    grid.each do |row|
+      puts row.join
+    end
+
+    break
   end
-
-  png.save("output/#{i + 1}.png")
 end
